@@ -18,6 +18,7 @@ pub struct Universe {
     cells: Vec<Cell>,
 }
 
+/// Private methods
 impl Universe {
     fn get_index(&self, row: u32, column: u32) -> usize {
         (row * self.width + column) as usize
@@ -39,7 +40,11 @@ impl Universe {
         }
         count
     }
+}
 
+/// Public methods to use in JS
+#[wasm_bindgen]
+impl Universe {
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
 
@@ -71,7 +76,6 @@ impl Universe {
         }
         self.cells = next;
     }
-
     pub fn new() -> Universe {
         let width = 64;
         let height = 64;
