@@ -1,3 +1,3 @@
 import { greet } from './conway_wasm';
 
-greet('Rust and WebAssembly');
+greet('Rust and WebAssembly', 'dmitry');
