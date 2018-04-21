@@ -19,7 +19,47 @@ const canvas = document.querySelector('#game-of-life-canvas');
 canvas.height = (CELL_SIZE + 1) * height + 1;
 canvas.width = (CELL_SIZE + 1) * width + 1;
 
+const playPauseButton = document.querySelector('#play-pause');
+
 const ctx = canvas.getContext('2d');
+let animationId = null;
+
+const play = () => {
+  playPauseButton.textContent = '⏸';
+  renderLoop();
+};
+
+const pause = () => {
+  playPauseButton.textContent = '▶';
+  cancelAnimationFrame(animationId);
+  animationId = null;
+};
+
+playPauseButton.addEventListener('click', (event) => {
+  if (isPaused()) {
+    play();
+  } else {
+    pause();
+  }
+});
+
+canvas.addEventListener('click', (event) => {
+  const boundingRect = canvas.getBoundingClientRect();
+
+  const scaleX = canvas.width / boundingRect.width;
+  const scaleY = canvas.height / boundingRect.height;
+
+  const canvasLeft = (event.clientX - boundingRect.left) * scaleX;
+  const canvasTop = (event.clientY - boundingRect.top) * scaleY;
+
+  const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
+  const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
+
+  universe.toggle_cell(row, col);
+
+  drawCells();
+  drawGrid();
+});
 
 const renderLoop = () => {
   universe.tick();
@@ -27,8 +67,10 @@ const renderLoop = () => {
   drawGrid();
   drawCells();
 
-  requestAnimationFrame(renderLoop);
+  animationId = requestAnimationFrame(renderLoop);
 };
+
+const isPaused = () => animationId === null;
 
 const drawGrid = () => {
   ctx.beginPath();
@@ -64,12 +106,7 @@ const drawCells = () => {
 
       ctx.fillStyle = cells[idx] === DEAD ? DEAD_COLOR : ALIVE_COLOR;
 
-      ctx.fillRect(
-        col * (CELL_SIZE + 1) + 1,
-        row * (CELL_SIZE + 1) + 1,
-        CELL_SIZE,
-        CELL_SIZE,
-      );
+      ctx.fillRect(col * (CELL_SIZE + 1) + 1, row * (CELL_SIZE + 1) + 1, CELL_SIZE, CELL_SIZE);
     }
   }
 
@@ -77,4 +114,4 @@ const drawCells = () => {
 };
 
 // start rendering
-requestAnimationFrame(renderLoop);
+play();

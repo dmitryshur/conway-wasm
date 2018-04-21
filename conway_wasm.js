@@ -35,6 +35,10 @@ cells () {
         const ret = wasm.universe_cells(this.ptr);
                 return ret;
             }
+toggle_cell (arg0, arg1) {
+        const ret = wasm.universe_toggle_cell(this.ptr, arg0, arg1);
+                return ret;
+            }
 }
 
                 const TextDecoder = typeof window === 'object' && window.TextDecoder
